@@ -4,7 +4,7 @@ const path = require ('path');
 fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, err => {
     if (err) throw err;
 
-    
+
         fs.readFile(path.join(__dirname, 'template.html'), 'utf-8', (err, data) => {
                 if (err) throw err;
                 let re = /(?<={{)\w+(?=}})/g;
@@ -13,13 +13,12 @@ fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, err => {
                 for (let i = 0; i < arraySection.length; i++) {
                     let replaceString = `{{${arraySection[i]}}}`;
                     let replaceFile = arraySection[i] + '.html';
-                    
+                                      
                     fs.readFile(path.join(__dirname, 'components', replaceFile), 'utf-8', (err, dataFiles) => {
                             if (err) throw err;
                             data = data.replace(replaceString, dataFiles.toString());
-                            fs.writeFile(path.join(__dirname, 'project-dist', 'index.html'), data, (err) => {
-                                if (err) throw err;
-                            });                         
+                                const output = fs.createWriteStream(path.join(__dirname, '/project-dist/index.html'));
+                                output.write(data.toString() + '\n');                      
                     }); 
                 }
             });
