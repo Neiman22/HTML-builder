@@ -15,7 +15,7 @@ fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, err => {
         stream.on('end', () => {
             function replaceTags (template){
                 
-                var re = /(?<={)\d+(?=})/g;
+              
                 console.log(template.match(re));
             }
             replaceTags (data);
