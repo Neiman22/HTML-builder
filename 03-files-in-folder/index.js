@@ -1,15 +1,16 @@
 const fs = require('fs');
+const path = require ('path');
+const dirPath = path.join(__dirname, '/secret-folder/');
 
-fs.readdir('./secret-folder/', (err, files) => {
-    for (i = 0; i < files.length; i++) {
-        fileName = files[i].split('.')[0];
-        fileExtension = files[i].split('.')[1];
-        fileLocation = './secret-folder/' + files[i];
-        let fileSize = 0;       
-        fs.stat(fileLocation, (err, stats) => {
-            fileSize = stats.size;
-            console.log (fileSize);
-        });
-        console.log (`${fileName} - ${fileExtension} - ${fileSize}kb`);  
+fs.readdir(dirPath,(err, files) => {
+    for (let i = 0; i < files.length; i++) {
+        folder = path.join(dirPath, files[i]);
+        fs.stat(folder, (err, stats) => {
+            if (stats.isFile()) {
+                console.log (`${files[i].split('.')[0]} - ${files[i].split('.')[1]} - ${stats.size} byte`);
+            };
+        })  
     }
 })
+
+
