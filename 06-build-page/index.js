@@ -3,33 +3,30 @@ const path = require ('path');
 
 fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, err => {
     if (err) throw err;
-    console.log('Папка project-dist была создана');
 
-    fs.writeFile(path.join(__dirname, 'project-dist', 'index.html'), '', (err) => {
-        if (err) throw err;
-        console.log('Файл index.html был создан');
 
-        const stream = fs.createReadStream(path.join(__dirname, 'template.html'), 'utf-8');
-        let data = '';
-        stream.on('data', chunk => data += chunk);
-        stream.on('end', () => {
-            function replaceTags (template){
+        fs.readFile(path.join(__dirname, 'template.html'), 'utf-8', (err, data) => {
+                if (err) throw err;
+                let re = /(?<={{)\w+(?=}})/g;
+                let arraySection = data.match(re);
                 
-              
-                console.log(template.match(re));
-            }
-            replaceTags (data);
-            fs.appendFile(path.join(__dirname, 'project-dist', 'index.html'), data, err => {
-                    if (err) throw err;   
+                for (let i = 0; i < arraySection.length; i++) {
+                    let replaceString = `{{${arraySection[i]}}}`;
+                    let replaceFile = arraySection[i] + '.html';
+                                      
+                    fs.readFile(path.join(__dirname, 'components', replaceFile), 'utf-8', (err, dataFiles) => {
+                            if (err) throw err;
+                            data = data.replace(replaceString, dataFiles.toString());
+                                const output = fs.createWriteStream(path.join(__dirname, '/project-dist/index.html'));
+                                output.write(data.toString() + '\n');                      
+                    }); 
                 }
-            );
-        });
-        stream.on('error', error => console.log('Error', error.message));
-    });
+            });
+    
 
+    
     fs.writeFile(path.join(__dirname, 'project-dist', 'style.css'), '', (err) => {
         if (err) throw err;
-        console.log('Файл style.css был создан');
         const output = fs.createWriteStream(path.join(__dirname, '/project-dist/style.css'));
         fs.readdir(path.join(__dirname, 'styles'),(err, files) => {
             for (let i = 0; i < files.length; i++) {
@@ -47,9 +44,9 @@ fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, err => {
         });
     });
 
+
     fs.mkdir(path.join(__dirname, 'project-dist', 'assets'), { recursive: true }, err => {
         if (err) throw err;
-        console.log('Папка assets была создана');
         const directoryCopy = path.join (__dirname, 'assets');
         const directoryDest = path.join (__dirname, 'project-dist', 'assets');
         function copyFiles (dirCopy, dirDest) {
