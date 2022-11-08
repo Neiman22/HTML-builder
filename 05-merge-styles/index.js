@@ -12,7 +12,7 @@ fs.readdir(dirStyles,(err, files) => {
                 if (files[i].split('.')[1] === "css"){
                         const input = fs.createReadStream(path.join(dirStyles, files[i]));
                         input.on ('data', data => {
-                            output.write(data.toString() + '\n')
+                            output.write(data.toString() + '\n');
                         })
                 }                
             };

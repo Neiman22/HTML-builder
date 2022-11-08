@@ -44,32 +44,33 @@ fs.mkdir(path.join(__dirname, 'project-dist'), { recursive: true }, err => {
         });
     });
 
-
-    fs.mkdir(path.join(__dirname, 'project-dist', 'assets'), { recursive: true }, err => {
-        if (err) throw err;
-        const directoryCopy = path.join (__dirname, 'assets');
-        const directoryDest = path.join (__dirname, 'project-dist', 'assets');
-        function copyFiles (dirCopy, dirDest) {
-            fs.readdir(dirCopy,(err, files) => {
-                for (let i = 0; i < files.length; i++) {
-                    fs.stat(path.join(dirCopy, files[i]), (err, stats) => {
-                        if (stats.isFile()) {
-                            src = path.join (dirCopy, files[i]);
-                            dest = path.join (dirDest, files[i]);
-                            fs.copyFile (src, dest, () => {})
-                        } else {                         
-                            newDirCopy = path.join(dirCopy, files[i]);
-                            newDirDest = path.join(dirDest, files[i]);
-                            fs.mkdir(newDirDest, { recursive: true }, err => {
-                                if (err) throw err;
-                            });
-                            copyFiles (newDirCopy, newDirDest);
-                        }
-                    });
-                }
-            });
-        }
-        copyFiles (directoryCopy, directoryDest);
+    fs.rm (path.join(__dirname, 'project-dist', 'assets'), { recursive:true }, (err) => { 
+        fs.mkdir(path.join(__dirname, 'project-dist', 'assets'), { recursive: true }, err => {
+            if (err) throw err;
+            const directoryCopy = path.join (__dirname, 'assets');
+            const directoryDest = path.join (__dirname, 'project-dist', 'assets');
+            function copyFiles (dirCopy, dirDest) {
+                fs.readdir(dirCopy,(err, files) => {
+                    for (let i = 0; i < files.length; i++) {
+                        fs.stat(path.join(dirCopy, files[i]), (err, stats) => {
+                            if (stats.isFile()) {
+                                src = path.join (dirCopy, files[i]);
+                                dest = path.join (dirDest, files[i]);
+                                fs.copyFile (src, dest, () => {})
+                            } else {                         
+                                newDirCopy = path.join(dirCopy, files[i]);
+                                newDirDest = path.join(dirDest, files[i]);
+                                fs.mkdir(newDirDest, { recursive: true }, err => {
+                                    if (err) throw err;
+                                });
+                                copyFiles (newDirCopy, newDirDest);
+                            }
+                        });
+                    }
+                });
+            }
+            copyFiles (directoryCopy, directoryDest);
+        });
     });
 
 });
